@@ -1,11 +1,11 @@
-import 'dart:async';
 import 'dart:developer';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:semaforo_app/App/controller/theme_configs.dart';
 
 import '../custom_snack_bar.dart';
 
@@ -23,108 +23,65 @@ class _NewOptionState extends State<NewOption> {
   final String errorMessage = "Preencha o IP corretamente";
   bool isSelected = false;
   TextEditingController methodController = TextEditingController();
-  int delayPeriodic = 6;
 
-  Timer timer;
   void getHTTpRequest() async {
     while (isSelected) {
       try {
         log('MODO ${methodController.text}');
-        var response = await http
-            .get("http://${widget.ipText}/${methodController.text}")
-            .timeout(Duration(seconds: delayPeriodic), onTimeout: () {
-          throw Exception('Timeout error');
-        });
+        var response =
+            await http.get("http://${widget.ipText}/${methodController.text}");
         print(response.body);
       } catch (e) {
         setState(() {
           isSelected = false;
         });
-        timer.cancel();
         print(e);
         mostrarSnackBar(message: e.toString(), context: context);
       }
-      await Future.delayed(Duration(seconds: delayPeriodic));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    return Container(
-      width: width * 0.85,
-      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5.0),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 8,
-              color: Colors.black.withOpacity(0.25),
-              offset: Offset(2, 3),
-            )
-          ]),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (widget.ipText.isNotEmpty) ...[
-            Expanded(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Text(
-                      widget.ipText.isEmpty
-                          ? 'Insira seu IP'
-                          : widget.ipText + '/',
-                      style: GoogleFonts.openSans(
-                          color: widget.ipText.isNotEmpty
-                              ? Colors.black
-                              : Colors.black.withOpacity(0.5),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 15),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 40,
-                      child: TextField(
-                        controller: methodController,
-                        decoration: InputDecoration(
-                            labelText: 'Método',
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  width: 1,
-                                  color: Colors.blue.withOpacity(0.5)),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 1, color: Colors.lightBlue),
-                              borderRadius: BorderRadius.circular(5),
-                            )),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ] else ...[
-            Expanded(
-              child: AutoSizeText(
-                'Insira o IP do ESP nas configurações',
+    return Consumer<DarkThemeProvider>(builder: (_, theme, __) {
+      return Container(
+        width: 120,
+        height: 120,
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            color: theme.darkTheme ? Color(0xFF5A5A5A) : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                  color: Colors.black.withOpacity(0.2),
+                  offset: Offset(0, 3))
+            ],
+            borderRadius: BorderRadius.circular(10)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Método',
                 style: GoogleFonts.openSans(
-                    color: widget.ipText.isNotEmpty
-                        ? Colors.black
-                        : Colors.black.withOpacity(0.5),
+                    fontSize: 16.0,
                     fontWeight: FontWeight.w400,
-                    fontSize: 15),
+                    color: theme.darkTheme
+                        ? Color(0xFFffffff)
+                        : Color(0xFF646464))),
+            Container(
+              height: 20,
+              child: TextField(
+                controller: methodController,
+                style: GoogleFonts.openSans(
+                    fontSize: 14.0, fontWeight: FontWeight.w600),
               ),
             ),
-          ],
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: CupertinoSwitch(
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child:
+                  // CustomSwitch(value: isSelected, onChanged: onChanged)
+                  CupertinoSwitch(
                 value: isSelected,
                 onChanged: (value) {
                   if (isSelected) {
@@ -132,7 +89,9 @@ class _NewOptionState extends State<NewOption> {
                       isSelected = false;
                     });
                   } else {
-                    if (widget.ipText.isEmpty || widget.ipText.length < 11) {
+                    if (widget.ipText.isEmpty ||
+                        widget.ipText.length < 11 ||
+                        widget.ipText.endsWith('.0.0')) {
                       mostrarSnackBar(message: errorMessage, context: context);
                     } else {
                       setState(() {
@@ -141,10 +100,14 @@ class _NewOptionState extends State<NewOption> {
                       getHTTpRequest();
                     }
                   }
-                }),
-          ),
-        ],
-      ),
-    );
+                },
+                trackColor:
+                    theme.darkTheme ? Color(0xFFB5B5B5) : Color(0xFFE1E1E1),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
