@@ -6,13 +6,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:semaforo_app/App/controller/theme_configs.dart';
+import 'package:semaforo_app/App/model/multa.dart';
 import 'package:semaforo_app/App/model/semaforo.dart';
 import 'package:semaforo_app/App/view/home/components/card_new_option.dart';
 import 'package:semaforo_app/App/view/home/components/card_toggle.dart';
 import 'package:semaforo_app/App/view/home/components/modal_settings.dart';
 import 'package:semaforo_app/App/view/home/components/pedestrian_card.dart';
-import 'package:semaforo_app/App/view/home/components/placa/placa_card.dart';
 import 'package:semaforo_app/App/view/home/components/semaforo_card.dart';
+import 'package:semaforo_app/App/view/listaMultas/lista_multas.dart';
 import 'dart:async';
 import 'custom_snack_bar.dart';
 
@@ -28,8 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
       "Preencha o IP do ESP corretamente nas configurações";
   TextEditingController ipController =
       TextEditingController(text: '192.168.0.0');
+
   int semaforoSelect = 0;
   List<Widget> novosWidgets = [];
+  List<Multa> novasMultas = List.empty(growable: true);
 
   Semaforo semaforo = Semaforo(luzes: [0, 0, 1]);
 
@@ -47,16 +50,23 @@ class _HomeScreenState extends State<HomeScreen> {
         log('MODO DIA');
         var response = await http.get("http://${ipController.text}/dia");
         print(response.body);
-        // await Future.delayed(Duration(seconds: 2));
         setState(() {
           // lDRValue = double.parse(response.body.split(",")[0]);
+          var responseList = response.body.split(",");
           semaforo.luzes = convertToSemaforos(response.body);
-          // int.parse(response.body.split(",")[1]) == 1 ? true : false;
+          if (responseList[3].isNotEmpty && novasMultas.isEmpty) {
+            novasMultas.add(
+                Multa(placa: responseList[3], horaDaMulta: DateTime.now()));
+          } else if (responseList[3].isNotEmpty &&
+              novasMultas.isNotEmpty &&
+              novasMultas.last.placa != responseList[3]) {
+            novasMultas.add(
+                Multa(placa: responseList[3], horaDaMulta: DateTime.now()));
+          }
+          semaforo.qtdMultas = int.parse(responseList[4] ?? 0);
         });
-        // await Future.delayed(Duration(seconds: 3));
-        // setState(() {
-        //   hasPedestrian = false;
-        // });
+
+        print(novasMultas.toString());
       } catch (e) {
         setState(() {
           semaforoSelect = 0;
@@ -154,13 +164,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                   PedestrianCard(
                                     hasPedestrian: semaforo.hasPedestrian,
                                     isRedSign: semaforo.luzes[0] == 1,
-                                  )
+                                  ),
                                 ],
                               ),
                               Padding(
-                                padding:
-                                    EdgeInsets.only(top: 24.0, bottom: 60.0),
-                                child: CardPlaca(),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 24.0, horizontal: width * 0.2),
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, '/lista-multas',
+                                          arguments: novasMultas);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Center(
+                                        child: Text("Acessar Lista de Multas"),
+                                      ),
+                                    )),
+                              ),
+                              SizedBox(
+                                height: 60.0,
                               )
                             ],
                           ),
@@ -170,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 top: 0,
                 child: Container(
                   width: width,
-                  height: 200,
+                  height: height * 0.3,
                   decoration: BoxDecoration(
                       color: theme.darkTheme
                           ? Color(0xFFC5C5C5)

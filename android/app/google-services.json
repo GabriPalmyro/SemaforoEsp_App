@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "632945783571",
+    "project_id": "semaforoapp",
+    "storage_bucket": "semaforoapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632945783571:android:227bfd9ddc7d4fe00420e6",
+        "android_client_info": {
+          "package_name": "com.example.semaforo_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632945783571-33cav4p2mtocdu2sdvmok31stpm9ou5o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfBbRTr5vPaRLpZhDsv6_5zP_acGVZg8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632945783571-33cav4p2mtocdu2sdvmok31stpm9ou5o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

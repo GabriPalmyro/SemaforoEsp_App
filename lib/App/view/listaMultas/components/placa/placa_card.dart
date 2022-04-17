@@ -57,7 +57,17 @@ class CardPlaca extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
+          Expanded(
+              child: Container(
+            child: Center(
+                child: Text(placa,
+                    style: GoogleFonts.openSans(
+                        letterSpacing: 2,
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black))),
+          ))
         ],
       ),
     );
