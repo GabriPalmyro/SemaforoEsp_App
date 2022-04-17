@@ -1,16 +1,36 @@
-# semaforo_app
+<img src="https://user-images.githubusercontent.com/62028766/163730324-032f024e-c5b0-4598-914a-d0a23c70a789.png" alt="Logo" width="400">
 
-A new Flutter project.
+# 🚦 Semaforo ESP App
 
-## Getting Started
+Controle de um semáforo por aplicativo, utilizando o ESP8266 como o sistema do semáforo com conexão a Internet.
+O App monitora em tempo real a situação do semáforo, com controle de funcionalidades também pelo App, usando requisições Http (GET, POST)
 
-This project is a starting point for a Flutter application.
+## ⚒️ Funcionalidades
+* Comunicação em Tempo Real com o ESP8266
+* Comunicação HTTP com servidor NodeJS
+* Push Notification *(Multas capturadas)*
 
-A few resources to get you started if this is your first Flutter project:
+<!-- ROADMAP -->
+## 🌌 Roadmap
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- [x] Lista de Multas
+- [x] Responsividade completa
+- [ ] Terminar README.MD
+- [ ] Multi-language Suporte
+    - [ ] Portuguese
+    - [ ] English
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🔧 Feito Com
+
+* [Flutter](https://flutter.com)
+* [Node.js](https://nodejs.org/)
+* [ESP8266](https://google.com/search?q=esp8266)
+
+## 👨🏽‍💻 Desenvolvedores
+
+<table>
+  <tr>
+    <th><img src="https://avatars.githubusercontent.com/u/62028766?v=4" width=115 > <br> <sub> Gabriel Palmyro Martins </sub></th>
+    <th><img src="https://avatars.githubusercontent.com/u/57163905?v=4" width=115 > <br> <sub> Pedro Henrique Ton Pauletti </sub></th>
+  </tr>
+</table>
